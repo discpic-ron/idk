@@ -1,4 +1,5 @@
 import pygame
+import math
 
 pygame.init()
 screen = pygame.display.set_mode((800,600))
@@ -17,6 +18,7 @@ time_scale = 60
 max_sprint = 100
 sprint_lvl = 100
 current_hour = 6
+orbit_radius = 60  # Distance from player center
 current_honor = 0
 current_minute = 0
 stamina_regen = 0.5
@@ -50,6 +52,7 @@ health_bx = pygame.Rect(0,0,250,50)
 damange_bx = pygame.Rect(0,0,250,50)
 player_bx = pygame.Rect(100, 200, 50, 50)
 interaction_bx = pygame.Rect(200,300,50,50)
+weapon_rect = pygame.Rect(0, 0, 30, 10)
 
 # Text
 interaction_txt = font_small.render("Press E to interact",white,True)
@@ -141,6 +144,13 @@ while running:
     player_y -= speed
     player_bx.y -= speed
     
+  p_center = pygame.Vector2(player_rect.center)
+  m_pos = pygame.Vector2(pygame.mouse.get_pos())
+  direction = m_pos - p_center # Subtract to get direction, then scale to our orbit radius
+  if direction.length() > 0:  # Prevent error if mouse is on player center
+    direction.scale_to_length(orbit_radius)
+  weapon_rect.center = p_center + direction # The weapon's center is now p_center + the direction vector
+  
   if player_bx.colliderect(interaction_bx):
     screen.blit(interaction_txt,(interaction_bx.x,interaction_bx.y-20))
     if keys[pygame.K_e]:
@@ -151,6 +161,7 @@ while running:
   pygame.draw.rect(screen,gray,drain_bx,border_radius=20)
   pygame.draw.rect(screen,green,health_bx,border_radius=20)
   pygame.draw.rect(screen,yellow,sprint_bx,border_radius=20)
+  pygame.draw.rect(screen, (255, 50, 50), weapon_rect)   # Orbiting Weapon
   drawClock(startDay,dt)
   screen.blit(sun, (730,0))
   sun = pygame.transform.smoothscale(sun,(64,64))
