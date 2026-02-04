@@ -49,6 +49,10 @@ drain_bx = pygame.Rect(0,70,250,50)
 health_bx = pygame.Rect(0,0,250,50)
 damange_bx = pygame.Rect(0,0,250,50)
 player_bx = pygame.Rect(100, 200, 50, 50)
+interaction_bx = pygame.Rect(200,300,50,50)
+
+# Text
+interaction_txt = font_small.render("Press E to interact",white,True)
 
 # Day system
 def startDay(delta_time_seconds):
@@ -136,6 +140,11 @@ while running:
   elif keys[pygame.K_w] or keys[pygame.K_UP]:
     player_y -= speed
     player_bx.y -= speed
+    
+  if player_bx.colliderect(interaction_bx):
+    screen.blit(interaction_txt,(interaction_bx.x,interaction_bx.y-20))
+    if keys[pygame.K_e]:
+      pass
     
   screen.fill(black)
   pygame.draw.rect(screen,red,player_bx)
