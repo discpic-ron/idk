@@ -44,6 +44,7 @@ green = (0,255,0)
 # Sprites
 sun = pygame.image.load("assets/sun.png")
 moon = pygame.image.load("assets/moon.png")
+objects = [pygame.Rect(300,200,20,20)]
 
 # Rects
 sprint_bx = pygame.Rect(0,70,250,50)
@@ -150,7 +151,11 @@ while running:
   if direction.length() > 0:  # Prevent error if mouse is on player center
     direction.scale_to_length(orbit_radius)
   weapon_rect.center = p_center + direction # The weapon's center is now p_center + the direction vector
-  
+  for i in range(len(objects)):
+    if weapon_rect.colliderect(objects[i]):
+      objects.pop(i)
+      print("destroyed object!")
+      
   if player_bx.colliderect(interaction_bx):
     screen.blit(interaction_txt,(interaction_bx.x,interaction_bx.y-20))
     if keys[pygame.K_e]:
@@ -165,6 +170,8 @@ while running:
   drawClock(startDay,dt)
   screen.blit(sun, (730,0))
   sun = pygame.transform.smoothscale(sun,(64,64))
+  for enemy_rect in objects:
+    pygame.draw.rect(screen, brown, enemy_rect)
   pygame.display.flip()
   clock.tick(60)
 pygame.quit()
