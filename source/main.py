@@ -43,21 +43,21 @@ green = (0,255,0)
 brown = (150,75,0)
 
 # Sprites
-sun = pygame.image.load("assets/sun.png")
-moon = pygame.image.load("assets/moon.png")
+sun = pygame.Rect(730,0,20,20)
 objects = [pygame.Rect(300,200,20,20)]
 
 # Rects
-sprint_bx = pygame.Rect(0,70,250,50)
-drain_bx = pygame.Rect(0,70,250,50)
-health_bx = pygame.Rect(0,0,250,50)
-damange_bx = pygame.Rect(0,0,250,50)
+sprint_bx = pygame.Rect(0,100,250,30)
+drain_bx = pygame.Rect(0,100,250,30)
+health_bx = pygame.Rect(0,60,250,30)
+damange_bx = pygame.Rect(0,60,250,30)
 player_bx = pygame.Rect(100, 200, 50, 50)
 interaction_bx = pygame.Rect(200,300,50,50)
 weapon_rect = pygame.Rect(0, 0, 30, 10)
 
 # Text
 interaction_txt = font_small.render("Press E to interact",white,True)
+
 
 # Day system
 def startDay(delta_time_seconds):
@@ -70,7 +70,9 @@ def startDay(delta_time_seconds):
   current_minute = int(seconds_today // 60) % 60
   display_hour = current_hour % 12 or 12
   am_pm = "AM" if current_hour < 12 else "PM"
-  return f"{display_hour:02d}:{current_minute:02d} {am_pm}"
+  return f"{display_hour:02d}:{current_
+minute:02d} {am_pm}"
+
 
 def endDay():
   global day, day_ended, current_hour, current_minute
@@ -87,15 +89,17 @@ def drawClock(start_day, dt):
   display_time_string = start_day(dt)
   current_time_surface = font_small.render(f"Time: {display_time_string}", True, white)
   day_surface = font_small.render(f"Day: {day}", True, white)
-  screen.blit(current_time_surface, (2, 0))
+  screen.blit(current_time_
+surface, (2, 0))
+
   screen.blit(day_surface, (2, 32))
-  
+ 
 while running:
   dt = clock.get_time()/1000
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       running = False
-      
+     
   keys = pygame.key.get_pressed()
   if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
     if sprint_bx.width > 0:
@@ -106,10 +110,10 @@ while running:
   else:
     if sprint_bx.width < 250:
       sprint_bx.width += stamina_regen
-      
+     
   sprint_bx.width = max(0, min(sprint_bx.width, 250))
   health_bx.width = max(0, min(health_bx.width, 250))
-  
+ 
   if keys[pygame.K_a] or keys[pygame.K_LEFT]:
     player_x -= speed
     player_bx.x -= speed
@@ -122,34 +126,37 @@ while running:
   elif keys[pygame.K_w] or keys[pygame.K_UP]:
     player_y -= speed
     player_bx.y -= speed
-    
-  p_center = pygame.Vector2(player_rect.center)
-  m_pos = pygame.Vector2(pygame.mouse.get_pos())
+   
+  camera_x = player_bx.centerx - 400
+  camera_y = player_bx.centery - 300
+
+  p_center = pygame.Vector2(player_bx.center)
+  m_pos = pygame.Vector2(pygame.mouse.get_pos()) + pygame.Vector2(camera_x, camera_y)
   direction = m_pos - p_center # Subtract to get direction, then scale to our orbit radius
   if direction.length() > 0:  # Prevent error if mouse is on player center
     direction.scale_to_length(orbit_radius)
   weapon_rect.center = p_center + direction # The weapon's center is now p_center + the direction vector
+ 
   for i in range(len(objects)):
     if weapon_rect.colliderect(objects[i]):
       objects.pop(i)
       print("destroyed object!")
-      
+     
   if player_bx.colliderect(interaction_bx):
     screen.blit(interaction_txt,(interaction_bx.x,interaction_bx.y-20))
     if keys[pygame.K_e]:
       pass
-    
+   
   screen.fill(black)
-  pygame.draw.rect(screen,red,player_bx)
+  pygame.draw.rect(screen, red, (player_bx.x - camera_x, player_bx.y - camera_y, player_bx.width, player_bx.height))
+  pygame.draw.rect(screen, (255, 50, 50), (weapon_rect.x - camera_x, weapon_rect.y - camera_y, weapon_rect.width, weapon_rect.height))
   pygame.draw.rect(screen,gray,drain_bx,border_radius=20)
   pygame.draw.rect(screen,green,health_bx,border_radius=20)
   pygame.draw.rect(screen,yellow,sprint_bx,border_radius=20)
-  pygame.draw.rect(screen, (255, 50, 50), weapon_rect)   # Orbiting Weapon
+  pygame.draw.rect(screen,yellow,sun)
   drawClock(startDay,dt)
-  screen.blit(sun, (730,0))
-  sun = pygame.transform.smoothscale(sun,(64,64))
   for enemy_rect in objects:
-    pygame.draw.rect(screen, brown, enemy_rect)
+    pygame.draw.rect(screen, brown, (enemy_rect.x - camera_x, enemy_rect.y - camera_y, enemy_rect.width, enemy_rect.height))
   pygame.display.flip()
   clock.tick(60)
 pygame.quit()
