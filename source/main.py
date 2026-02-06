@@ -90,29 +90,6 @@ def drawClock(start_day, dt):
   screen.blit(current_time_surface, (2, 0))
   screen.blit(day_surface, (2, 32))
   
-def grant_honor(amount):
-  global current_honor,privilege_list
-  current_honor += amount
-  if current_honor > max_honor:
-    current_honor = max_honor
-  for p in privilege_list:
-    p.update_status(current_honor)
-  return current_honor, privileges
-
-def lose_honor(amount):
-  global current_honor,privilege_list
-  current_honor -= amount
-  if current_honor < 0:
-    current_honor = 0
-  # revoke privileges if honor drops below threshold
-  for p in privilege_list:
-    if current_honor < p.threshold and p.status == "unlocked":
-      p.status = "locked"
-      if p.name in privileges:
-        privileges.remove(p.name)
-      print(f"{p.name} revoked at {current_honor} Hxp!")
-  return current_honor, privileges
-  
 while running:
   dt = clock.get_time()/1000
   for event in pygame.event.get():
