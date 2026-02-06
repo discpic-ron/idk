@@ -40,6 +40,7 @@ yellow = (255,255,0)
 gray = (128,128,128)
 red = (255,0,0)
 green = (0,255,0)
+brown = (150,75,0)
 
 # Sprites
 sun = pygame.image.load("assets/sun.png")
