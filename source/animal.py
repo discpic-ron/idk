@@ -4,6 +4,9 @@ class Animal:
         self.health = self.max_health
         self.speed = speed
         self.animal_type = animal_type
+        self.x = x
+        self.y = y
+        self.rect = pygame.Rect(self.x, self.y, 40, 40)
         self.images = []
         self.animations = []
         self.animation_state = "idle"
@@ -20,3 +23,7 @@ class Animal:
     def changeAnimation(self,new_ani):
         self.animation_state = new_ani
         return self.animation_state
+        
+    def update(self): 
+        self.rect.x = self.x 
+        self.rect.y = self.y
