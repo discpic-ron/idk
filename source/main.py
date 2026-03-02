@@ -1,6 +1,7 @@
 import pygame
 import math
 import random
+from animal import Animal
 
 pygame.init()
 SCREEN_W, SCREEN_H = 800, 600
@@ -38,31 +39,11 @@ player_bx = pygame.Rect(world_w//2, world_h//2, 40, 40)
 sprint_width = 250
 object_data = {} 
 animals = []
+player_x = 0
+player_y = 0
 
 # Colors
 black, white, yellow, gray, red, green, brown, blue = (0,0,0), (255,255,255), (255,255,0), (128,128,128), (255,0,0), (0,255,0), (150,75,0), (40, 90, 200)
-
-class Animal:
-    def __init__(self, x, y):
-        self.pos = pygame.Vector2(x * TILE_SIZE, y * TILE_SIZE)
-        self.target_pos = pygame.Vector2(self.pos)
-        self.speed = random.uniform(0.5, 1.5)
-        self.move_timer = 0
-
-    def update(self):
-        self.move_timer -= 1
-        if self.move_timer <= 0:
-            angle = random.uniform(0, math.tau)
-            dist = random.uniform(50, 150)
-            self.target_pos = self.pos + pygame.Vector2(math.cos(angle) * dist, math.sin(angle) * dist)
-            self.move_timer = random.randint(100, 300)
-
-        move_dir = self.target_pos - self.pos
-        if move_dir.length() > 2:
-            self.pos += move_dir.normalize() * self.speed
-
-    def draw(self, surface, cam_x, cam_y):
-        pygame.draw.circle(surface, (255, 150, 150), (int(self.pos.x - cam_x), int(self.pos.y - cam_y)), 6)
 
 # --- NOISE FUNCTIONS ---
 def random_gradient(ix, iy):
@@ -179,16 +160,16 @@ while running:
         if event.type == pygame.QUIT: running = False
 
     keys = pygame.key.get_pressed()
-    is_sprinting = keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT] and sprint_width > 2
     curr_speed = 7 if is_sprinting else 4
-    if is_sprinting: sprint_width -= 2
-    elif sprint_width < 250: sprint_width += stamina_regen
+    if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT] and sprint_width > 0: 
+        sprint_width -= 2
+    if sprint_width < 250: 
+        sprint_width += stamina_regen
 
-    move = pygame.Vector2(0,0)
-    if keys[pygame.K_a]: move.x -= 1
-    if keys[pygame.K_d]: move.x += 1
-    if keys[pygame.K_w]: move.y -= 1
-    if keys[pygame.K_s]: move.y += 1
+    if keys[pygame.K_a] or keys[pygame.K_LEFT]: player_x -= 1
+    if keys[pygame.K_d] or keys[pygame.K_RIGHT]: player_x += 1
+    if keys[pygame.K_w] or keys[pygame.K_UP]: player_y -= 1
+    if keys[pygame.K_s] or keys[pygame.K_DOWN: player_y += 1
     if move.length() > 0: player_bx.topleft += move.normalize() * curr_speed
 
     BUF = 150
