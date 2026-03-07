@@ -41,10 +41,52 @@ object_data = {}
 animals = []
 player_x = 0
 player_y = 0
+day = 1
+total_game_seconds = 21600.0   # start at 6:00 AM
+shift_ended_flag = False
+TIME_SCALE_FACTOR = 60
+current_hour = 6
+current_minute = 0
 
 # Colors
 black, white, yellow, gray, red, green, brown, blue = (0,0,0), (255,255,255), (255,255,0), (128,128,128), (255,0,0), (0,255,0), (150,75,0), (40, 90, 200)
 
+def startDay(delta_time_seconds):
+    """Advance time and return formatted string."""
+    global total_game_seconds, current_hour, current_minute
+
+    total_game_seconds += delta_time_seconds * TIME_SCALE_FACTOR
+    seconds_today = total_game_seconds % 86400
+    current_hour = int(seconds_today // 3600) % 24
+    current_minute = int(seconds_today // 60) % 60
+
+    display_hour = current_hour % 12 or 12
+    am_pm = "AM" if current_hour < 12 else "PM"
+    return f"{display_hour:02d}:{current_minute:02d} {am_pm}"
+
+def endDay():
+    """Check if shift ended and increment day."""
+    global day, shift_ended_flag, current_hour, current_minute
+    if current_hour == 21 and current_minute == 0:
+        if not shift_ended_flag:
+            day += 1
+            print(f"--- Shift ended. Starting Day {day}. ---")
+            shift_ended_flag = True
+    else:
+        shift_ended_flag = False
+    
+def drawClock(start_day,end_day):
+  # Get the time elapsed since the last frame in real seconds
+  delta_time_seconds = clock.tick(60) / 1000.0
+
+  # Call the endDay function and capture the updated display string
+  display_time_string = endDay(delta_time_seconds)
+  current_time_surface = font.render(f"time: {display_time_string}", True, white)
+  day_surface = font.render(f"Day: {day}", True, white)
+
+  screen.blit(current_time_surface, (2, 0))
+  screen.blit(day_surface, (2, 32))
+    
 # --- NOISE FUNCTIONS ---
 def random_gradient(ix, iy):
     if (ix, iy) not in gradients:
