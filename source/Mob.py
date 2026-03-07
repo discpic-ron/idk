@@ -1,4 +1,4 @@
-class Animal:
+class mob:
     def __init__(self, x, y):
         self.pos = pygame.Vector2(x * TILE_SIZE, y * TILE_SIZE)
         self.target_pos = pygame.Vector2(self.pos)
