@@ -1,7 +1,7 @@
 import pygame
 import math
 import random
-from animal import Animal
+from mob import Mob
 
 pygame.init()
 SCREEN_W, SCREEN_H = 800, 600
