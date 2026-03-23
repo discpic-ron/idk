@@ -2,6 +2,7 @@ import pygame
 from Item import item
 
 class food(item):
+    registry = []
     def __init__(self, name, image,food_value, effect=None, stackable=True, max_stack=99):
         super().__init__(name, stackable, max_stack)
         self.name = name
