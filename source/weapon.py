@@ -1,31 +1,40 @@
-from item import Item
+import pygame
+from Item import item
 
-class Weapon(Item):
-  def __init__(self,name,damage,durability,weight,animation=None,range=None,cool_down=0,stackable=False,max_stack=1):
-    super().__init__(name,stackable,max_stack)
-    self.name = name
-    self.damage = damage
-    self.max_durability = 100
-    self.durability = self.max_durability
-    self.range = range
-    self.cool_down = cool_down
-    self.last_used = 0
-    self.weight = weight
-    self.status_effect = "poison"
-    self.status_duration = 5
-    self.animation = animation
-    self.broken = False
+class weapon(item):
+    registry = []
 
-  def use(self,amount):
-    if self.durability > 0:
-      self.durability -= amount
+    def __init__(self, name, image, damage, weight, animation, effect=None,ranged=False, stackable=False, max_stack=1):
+        super().__init__(name, stackable, max_stack)
+        self.name = name
+        self.image = image
+        self.max_durability = 100
+        self.durability = self.max_durability
+        self.damage = damage
+        self.ranged = ranged
+        self.weight = weight
+        self.effect = effect
+        self.animation = animation
+        self.broken = False
+        weapon.registry.append(self)
 
-  def repair(self,amount):
-    if self.durability < 100:
-      self.durability += amount
+    def use(self, amount):
+        if self.durability > 0:
+            self.durability -= amount
+            return self.durability
 
-  def can_use(self, current_time):
-    return current_time - self.last_used >= self.cooldown
+    def repair(self, amount):
+        if self.durability < 100:
+            self.durability += amount
+            return self.durability
 
-  def apply_effect(self):
-    pass
+    def draw(self,screen):
+        pass
+
+    def get_info(self):
+        return {
+            "name": self.name,
+            "damage": self.damage,
+            "weight": self.weight,
+            "durability": self.durability
+        }
