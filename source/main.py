@@ -47,6 +47,12 @@ shift_ended_flag = False
 TIME_SCALE_FACTOR = 60
 current_hour = 6
 current_minute = 0
+image = pygame.image.load('shade-cloud.png').convert_alpha()
+image = pygame.transform.scale(image,(100,100))
+cloud_speed = 5
+cloud_rect = image.get_rect()
+cloud_rect.y = 250
+cloud_rect.left = 800
 
 # Colors
 black, white, yellow, gray, red, green, brown, blue = (0,0,0), (255,255,255), (255,255,0), (128,128,128), (255,0,0), (0,255,0), (150,75,0), (40, 90, 200)
